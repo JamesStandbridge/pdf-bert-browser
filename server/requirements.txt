@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+pdfminer.six
+gensim
+numpy
+faiss-cpu
+python-multipart
