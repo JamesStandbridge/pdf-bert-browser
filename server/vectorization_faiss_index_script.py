@@ -6,6 +6,21 @@ from transformers import BertTokenizer, BertModel
 import numpy as np
 import faiss
 
+def add_to_faiss_index(doc_vector, faiss_index):
+    """
+    Ajoute un nouveau vecteur document à l'index FAISS existant.
+    
+    Args:
+    doc_vector (array): Le vecteur du nouveau document à ajouter.
+    faiss_index (faiss.Index): L'index FAISS existant.
+    
+    """
+    # Assurez-vous que le vecteur document est de type float32
+    doc_vector = np.array(doc_vector).astype('float32').reshape(1, -1)
+
+    # Ajoutez le vecteur à l'index
+    faiss_index.add(doc_vector)
+
 def load_documents(directory_path):
     documents = {}
     for filename in os.listdir(directory_path):

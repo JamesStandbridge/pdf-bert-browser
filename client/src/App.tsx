@@ -9,8 +9,8 @@ import { uploadFile } from './API/repository/file-repository';
 import { searchQuery } from './API/repository/search-repository';
 import { ResultItem } from './type';
 import SearchResultDisplay from './components/SearchResultDisplay';
-import Theme from './theme/Theme';
 import SearchForm from './components/SearchForm';
+import Theme from './theme/Theme';
 
 function App() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
