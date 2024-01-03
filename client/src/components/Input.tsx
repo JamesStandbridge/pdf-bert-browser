@@ -5,6 +5,10 @@ import {
 } from './design-system.styled';
 import styled from 'styled-components';
 
+import { Input as AntInput, InputRef } from 'antd';
+import React from 'react';
+
+
 type Props = {
     value: string;
     label: string;
@@ -17,9 +21,7 @@ type Props = {
     containerStyle?: React.CSSProperties;
 };
 
-import { Input as AntInput } from 'antd';
-
-const Input = ({
+const Input = React.forwardRef<InputRef, Props>(({
     value,
     label,
     placeholder = '',
@@ -29,13 +31,14 @@ const Input = ({
     prefix,
     error = '',
     containerStyle = {},
-}: Props) => {
+}, ref) => {
     return (
         <DesignComponentContainer style={containerStyle}>
             <Label>{label}</Label>
             <InputContainer>
                 {type === 'password' && (
                     <AntInput.Password
+                        ref={ref}
                         value={value}
                         prefix={prefix}
                         placeholder={placeholder}
@@ -47,6 +50,7 @@ const Input = ({
                 )}
                 {type === 'text' && (
                     <AntInput
+                        ref={ref}
                         value={value}
                         prefix={prefix}
                         placeholder={placeholder}
@@ -60,7 +64,7 @@ const Input = ({
             {error && <ErrorInputHelper>{error}</ErrorInputHelper>}
         </DesignComponentContainer>
     );
-};
+});
 
 export default Input;
 

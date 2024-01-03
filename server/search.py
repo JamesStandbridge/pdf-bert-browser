@@ -3,13 +3,16 @@
 import pickle
 import faiss
 import numpy as np
+import torch
+
 import os
 
-def load_model_index_and_filenames(model_path, faiss_index_path, filenames_path):
+def load_model_index_and_filenames(model_path, tokenizer_path, faiss_index_path, filenames_path):
+    tokenizer = pickle.load(open(tokenizer_path, "rb"))
     model = pickle.load(open(model_path, "rb"))
     faiss_index = faiss.read_index(faiss_index_path)
     filenames = pickle.load(open(filenames_path, "rb"))
-    return model, faiss_index, filenames
+    return tokenizer, model, faiss_index, filenames
 
 def count_occurrences(query, text, exact_search):
     text = text.lower()
@@ -24,28 +27,41 @@ def count_occurrences(query, text, exact_search):
     return count
 
 
-def search(query, model, faiss_index, filenames, text_directory, top_n=5):
-    query_vector = model.infer_vector(query.lower().split())
+def search(query, tokenizer, model, faiss_index, filenames, text_directory, top_n=5):
+    # Tokenize and encode the query
+    tokenized_query = tokenizer.encode(query, add_special_tokens=True, return_tensors="pt")
+    with torch.no_grad():
+        outputs = model(input_ids=tokenized_query)
+    query_vector = outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
+
+    # Use FAISS to find the closest document vectors
     query_vector = np.array(query_vector).reshape(1, -1).astype('float32')
     distances, indices = faiss_index.search(query_vector, top_n)
 
-    exact_search = query.startswith('"') and query.endswith('"')
-    if exact_search:
-        query = query[1:-1].lower()
-    else:
-        query = query.lower()
-
+    # Process the search results
     results = []
     for idx, distance in zip(indices[0], distances[0]):
-        if idx != -1:
+        if idx != -1 and idx < len(filenames):  # Ajouter une vérification ici
             original_filename = filenames[idx]
             text_filename = os.path.splitext(original_filename)[0] + '.txt'
             with open(f"{text_directory}/{text_filename}", "r") as file:
                 text = file.read().lower()
-                snippet = find_snippet(query, text) if exact_search else find_approximate_snippet(query, text)
-                occurrences = count_occurrences(query, text, exact_search)
-            results.append((original_filename, distance, snippet, occurrences))
+                exact_search = query.startswith('"') and query.endswith('"')
+                if exact_search:
+                    refined_query = query[1:-1].lower()
+                    snippet = find_snippet(refined_query, text)
+                    occurrences = count_occurrences(refined_query, text, True)
+                else:
+                    snippet = find_approximate_snippet(query.lower(), text)
+                    occurrences = count_occurrences(query.lower(), text, False)
+                results.append((original_filename, distance, snippet, occurrences))
+        else:
+            # Gérer le cas où l'indice n'est pas valide
+            print(f"Indice invalide retourné par FAISS: {idx}")
+            continue
+
     return results
+
 
 def clean_text(text):
     text = text.replace('\n', ' ').replace('\r', ' ')

@@ -15,6 +15,14 @@ class SearchRequest(BaseModel):
 
 app = FastAPI()
 
+
+model_path = 'node/index/bert_model.pkl'
+tokenizer_path = 'node/index/tokenizer.pkl'
+faiss_index_path = 'node/index/faiss_index.idx'
+filenames_path = 'node/index/filenames.pkl'
+text_path = 'node/extracted_texts'
+files_path = 'node/files'
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
@@ -28,25 +36,21 @@ async def upload_pdf(file: UploadFile = File(...)):
     print(file)
     await upload_and_process_pdf(
         file, 
-        upload_directory='node/files',
-        text_directory='node/extracted_texts',
-        model_path='node/index/doc2vec_model.pkl',
-        faiss_index_path='node/index/faiss_index.idx',
-        filenames_path='node/index/filenames.pkl'
+        upload_directory=files_path,
+        text_directory=text_path,
+        model_path=model_path,
+        tokenizer_path=tokenizer_path,
+        faiss_index_path=faiss_index_path,
+        filenames_path=filenames_path
     )
     return {"filename": file.filename}
 
 @app.post("/search/", response_model=List[dict])
 async def perform_search(request: SearchRequest):
     try:
-        model_path = 'node/index/doc2vec_model.pkl'
-        faiss_index_path = 'node/index/faiss_index.idx'
-        filenames_path = 'node/index/filenames.pkl'
-        text_directory = 'node/extracted_texts'
+        tokenizer, model, faiss_index, filenames = load_model_index_and_filenames(model_path, tokenizer_path, faiss_index_path, filenames_path)
 
-        model, faiss_index, filenames = load_model_index_and_filenames(model_path, faiss_index_path, filenames_path)
-
-        search_results = search(request.query, model, faiss_index, filenames, text_directory)
+        search_results = search(request.query, tokenizer, model, faiss_index, filenames, text_path)
 
         response = []
         for filename, distance, snippet, occurrences in search_results:
@@ -61,6 +65,7 @@ async def perform_search(request: SearchRequest):
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
     
 
 @app.get("/get-pdf/{filename}")
