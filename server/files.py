@@ -1,8 +1,7 @@
-# files.py
-
 import os
 import pickle
 import shutil
+import time
 from fastapi import UploadFile
 import faiss
 from pdf_text_extraction_script import process_pdf_directory
@@ -19,7 +18,18 @@ async def upload_and_process_pdf(
     ):
     if not os.path.exists(upload_directory):
         os.makedirs(upload_directory)
+
+    # Définir le chemin du fichier et vérifier s'il existe
     file_path = os.path.join(upload_directory, file.filename)
+    if os.path.exists(file_path):
+        # Modifier le nom du fichier pour éviter les conflits
+        timestamp = int(time.time())
+        file_name, file_extension = os.path.splitext(file.filename)
+        new_file_name = f"{file_name}_{timestamp}{file_extension}"
+        file_path = os.path.join(upload_directory, new_file_name)
+    else:
+        new_file_name = file.filename
+
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
@@ -27,29 +37,28 @@ async def upload_and_process_pdf(
 
     documents = load_documents(text_directory)
 
-    # Check if model and index exist
+    # Vérifiez si le modèle et l'index existent
     if os.path.exists(model_path) and os.path.exists(faiss_index_path):
-        # Load existing model, tokenizer, and index
+        # Charger le modèle, le tokenizer et l'index existants
         tokenizer = pickle.load(open(tokenizer_path, "rb"))
         model = pickle.load(open(model_path, "rb"))
         faiss_index = faiss.read_index(faiss_index_path)
         filenames = pickle.load(open(filenames_path, "rb"))
 
-        # Vectorize using existing model and tokenizer
+        # Vectoriser en utilisant le modèle et le tokenizer existants
         tokenizer, model, doc_vector = vectorize_documents(documents, (tokenizer, model))
         add_to_faiss_index(doc_vector, faiss_index)
     else:
-        # Initialize and create new model, tokenizer, and index
+        # Initialiser et créer un nouveau modèle, tokenizer et index
         tokenizer, model, doc_vectors = vectorize_documents(documents)
         faiss_index = create_faiss_index(doc_vectors)
         filenames = []
 
-    # Update filenames list
-    original_filename = file.filename.replace('.pdf', '')
-    if file.filename not in filenames:
-        filenames.append(file.filename)
+    # Mettre à jour la liste des noms de fichiers
+    if new_file_name not in filenames:
+        filenames.append(new_file_name)
 
-    # Save the updated model, index, and filenames
+    # Sauvegarder le tokenizer, le modèle, l'index et les noms de fichiers mis à jour
     pickle.dump(tokenizer, open(tokenizer_path, "wb"))
     pickle.dump(model, open(model_path, "wb"))
     faiss.write_index(faiss_index, faiss_index_path)
