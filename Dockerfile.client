@@ -21,14 +21,15 @@ RUN yarn build
 # Production stage
 FROM node:18
 
-# Install Express
-RUN yarn global add express
-
 WORKDIR /app
 
 # Copy the built app and the server script
 COPY --from=build-stage /app/dist /app/dist
 COPY ./client/server.js /app/
+COPY ./client/package.json /app/
+
+# Install production dependencies including express
+RUN yarn install --production
 
 EXPOSE 80
 
