@@ -9,7 +9,7 @@ import {
     FileUnknownOutlined,
     LoadingOutlined,
     FileSearchOutlined,
-    FileAddOutlined
+    FileAddOutlined,
 } from '@ant-design/icons';
 import { highlightSearchTerms } from '../../utils/highlighSearchTerms';
 import { BigIcon, NullText, PDFLink } from '../shared/design-system.styled';
@@ -36,7 +36,7 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
             setFilenames(files);
         };
         fetchFiles();
-    }, [])
+    }, []);
 
     useEffect(() => {
         setExpanded([]);
@@ -59,12 +59,12 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
         );
     };
 
-    console.log(filenames)
+    console.log(filenames);
 
     return (
         <Container>
             {filenames.length === 0 && (
-                <UploadRedirection onClick={() => navigate("/files")}>
+                <UploadRedirection onClick={() => navigate('/files')}>
                     <NullText>
                         <BigIcon>
                             <FileAddOutlined />
@@ -91,65 +91,32 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
             )}
             {!loading &&
                 searchResult &&
-                searchResult
-                    .filter(
-                        (result: ResultItem) =>
-                            result.snippet !== 'Snippet not found.',
-                    )
-                    .map((result: ResultItem, index: number) => {
-                        const showFullSnippet = showMore.includes(
-                            result.document,
-                        );
-                        const snippetToShow = showFullSnippet
-                            ? result.snippet
-                            : result.snippet.substring(0, snippetLimit);
-                        const remainingCharacters =
-                            result.snippet.length - snippetLimit;
-
+                searchResult.map((result: ResultItem, index: number) => {
+                    if (result.snippet === 'Snippet not found.') {
                         return (
                             <ResultContainer key={result.document}>
-                                <ResultTitle>{`Result - ${
-                                    index + 1
-                                }`}</ResultTitle>
-                                <SnippetContainer>
-                                    {highlightSearchTerms(
-                                        snippetToShow,
-                                        query.trim(),
-                                    )}
-                                    {!showFullSnippet &&
-                                        result.snippet.length > snippetLimit &&
-                                        ' ... '}
-                                    {result.snippet.length > snippetLimit && (
-                                        <ShowMoreButton
-                                            onClick={() =>
-                                                toggleShowMore(result.document)
-                                            }
-                                        >
-                                            {showFullSnippet
-                                                ? 'Show less'
-                                                : `Show ${remainingCharacters} more characters`}
-                                        </ShowMoreButton>
-                                    )}
-                                </SnippetContainer>
+                                <ResultTitle>
+                                    {`Result - ${index + 1}`}
+                                    <DistanceSpan>{`dist ${result.distance}`}</DistanceSpan>
+                                </ResultTitle>
+                                {/* <SnippetContainer>
+                                    {'Related content found'}
+                                </SnippetContainer> */}
                                 <SourceActionContainer
                                     onClick={() => expand(result.document)}
                                 >
                                     <ArrowIcon>
-                                        {expanded.includes(result.document) ? (
+                                        {!expanded.includes(result.document) ? (
                                             <DownOutlined />
                                         ) : (
                                             <RightOutlined />
                                         )}
                                     </ArrowIcon>
-                                    {`Sources - ${
-                                        result.occurrences
-                                    } occurrence${
-                                        result.occurrences > 1 ? 's' : ''
-                                    } in total`}
+                                    {`Source`}
                                     <HorizontalLine />
                                 </SourceActionContainer>
-                                {expanded.includes(result.document) ? (
-                                    <SourceContainer 
+                                {!expanded.includes(result.document) ? (
+                                    <SourceContainer
                                         href={`http://localhost:8000/get-pdf/${result.document}`}
                                         target="_blank"
                                     >
@@ -157,14 +124,76 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
                                             <FilePdfOutlined />
                                         </BigIcon>
 
-                                        <PDFLink>
-                                            {result.document}
-                                        </PDFLink>
+                                        <PDFLink>{result.document}</PDFLink>
                                     </SourceContainer>
                                 ) : null}
                             </ResultContainer>
                         );
-                    })}
+                    }
+
+                    const showFullSnippet = showMore.includes(result.document);
+                    const snippetToShow = showFullSnippet
+                        ? result.snippet
+                        : result.snippet.substring(0, snippetLimit);
+                    const remainingCharacters =
+                        result.snippet.length - snippetLimit;
+
+                    return (
+                        <ResultContainer key={result.document}>
+                            <ResultTitle>
+                                {`Result - ${index + 1}`}
+                                <DistanceSpan>{`dist ${result.distance}`}</DistanceSpan>
+                            </ResultTitle>
+                            <SnippetContainer>
+                                {highlightSearchTerms(
+                                    snippetToShow,
+                                    query.trim(),
+                                )}
+                                {!showFullSnippet &&
+                                    result.snippet.length > snippetLimit &&
+                                    ' ... '}
+                                {result.snippet.length > snippetLimit && (
+                                    <ShowMoreButton
+                                        onClick={() =>
+                                            toggleShowMore(result.document)
+                                        }
+                                    >
+                                        {showFullSnippet
+                                            ? 'Show less'
+                                            : `Show ${remainingCharacters} more characters`}
+                                    </ShowMoreButton>
+                                )}
+                            </SnippetContainer>
+                            <SourceActionContainer
+                                onClick={() => expand(result.document)}
+                            >
+                                <ArrowIcon>
+                                    {expanded.includes(result.document) ? (
+                                        <DownOutlined />
+                                    ) : (
+                                        <RightOutlined />
+                                    )}
+                                </ArrowIcon>
+                                {`Source - ${result.occurrences} occurrence${
+                                    result.occurrences > 1 ? 's' : ''
+                                } in total`}
+                                <HorizontalLine />
+                            </SourceActionContainer>
+                            {expanded.includes(result.document) ? (
+                                <SourceContainer
+                                    href={`http://localhost:8000/get-pdf/${result.document}`}
+                                    target="_blank"
+                                >
+                                    <BigIcon>
+                                        <FilePdfOutlined />
+                                    </BigIcon>
+
+                                    <PDFLink>{result.document}</PDFLink>
+                                </SourceContainer>
+                            ) : null}
+                        </ResultContainer>
+                    );
+                })}
             {!loading &&
             searchResult &&
             searchResult.filter(
@@ -204,6 +233,13 @@ const SnippetContainer = styled.div`
     position: relative;
 `;
 
+const DistanceSpan = styled.span`
+    color: ${(props) => props.theme.accentColor};
+    font-size: 12px;
+    margin-left: 10px;
+    font-weight: 400;
+`;
+
 const SourceContainer = styled.a`
     display: flex;
     align-items: center;
@@ -232,6 +268,8 @@ const HorizontalLine = styled.div`
 
 const ResultTitle = styled.h3`
     color: ${(props) => props.theme.textColor};
+    display: flex;
+    justify-content: space-between;
 `;
 
 const ResultContainer = styled.div`
@@ -242,4 +280,6 @@ const ResultContainer = styled.div`
     border-radius: 5px;
 `;
 
-const Container = styled.div`padding-bottom: 100px;`;
+const Container = styled.div`
+    padding-bottom: 100px;
+`;
