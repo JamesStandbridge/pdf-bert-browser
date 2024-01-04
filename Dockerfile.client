@@ -19,13 +19,20 @@ RUN echo "VITE_API_DOMAIN=http://51.210.255.189:8000" > /app/.env
 RUN yarn build
 
 # Production stage
-FROM nginx:stable-alpine as production-stage
+# Use the same Node image for the production stage
+FROM node:18
 
-# Copy the built app to the nginx directory
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+# Install `serve` to serve the static files
+RUN yarn global add serve
 
-# Expose port 80
+# Set the working directory
+WORKDIR /app
+
+# Copy the built app from the build-stage
+COPY --from=build-stage /app/dist /app/dist
+
+# Expose the port that `serve` will run on
 EXPOSE 80
 
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Start the serve server
+CMD ["serve", "-s", "dist", "-l", "80"]
