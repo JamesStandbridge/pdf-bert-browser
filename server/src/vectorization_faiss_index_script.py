@@ -28,24 +28,23 @@ def load_documents(directory_path):
 
 def vectorize_documents(documents):
     """
-    Vectorizes documents using the Doc2Vec model.
+    Vectorizes documents using the Doc2Vec model and normalizes the vectors.
 
     Args:
     documents (dict): A dictionary of documents where keys are filenames and 
-    values are the document contents.
+                      values are the document contents.
 
     Returns:
-    tuple: A tuple containing the trained Doc2Vec model and a list of document vectors.
-
-    Description:
-    Converts the documents into a format suitable for Doc2Vec, trains the model, 
-    and then infers 
-    vectors for each document. These vectors can be used for similarity comparisons.
+    tuple: A tuple containing the trained Doc2Vec model and a list of normalized document vectors.
     """
     tagged_data = [gensim.models.doc2vec.TaggedDocument(words=_d.split(), tags=[str(i)]) for i, _d in enumerate(documents.values())]
     model = gensim.models.Doc2Vec(tagged_data, vector_size=100, window=2, min_count=1, epochs=40)
     
+    # Inferring and normalizing document vectors
     doc_vectors = [model.infer_vector(doc.split()) for doc in documents.values()]
+    # Normalize each vector to have unit length
+    doc_vectors = [vec / np.linalg.norm(vec) if np.linalg.norm(vec) != 0 else np.zeros_like(vec) for vec in doc_vectors]
+
     return model, doc_vectors
 
 def create_faiss_index(doc_vectors):
