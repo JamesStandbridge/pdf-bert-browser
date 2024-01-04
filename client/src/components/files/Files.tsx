@@ -49,7 +49,7 @@ const Files = ({  }: Props) => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search for files"
                     name="search"
-                    label="Search"
+                    label="Search all files"
                     containerStyle={{ width: '100%' }}
                 />
                 <FileInput

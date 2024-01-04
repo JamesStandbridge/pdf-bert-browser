@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ResultItem } from '../../type';
+import { useNavigate } from 'react-router-dom';
 import {
     RightOutlined,
     DownOutlined,
@@ -8,9 +9,11 @@ import {
     FileUnknownOutlined,
     LoadingOutlined,
     FileSearchOutlined,
+    FileAddOutlined
 } from '@ant-design/icons';
 import { highlightSearchTerms } from '../../utils/highlighSearchTerms';
 import { BigIcon, NullText, PDFLink } from '../shared/design-system.styled';
+import { getAllFilenames } from '../../API/repository/file-repository';
 
 type Props = {
     query: string;
@@ -21,8 +24,19 @@ type Props = {
 const snippetLimit = 1000;
 
 const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
+    const navigate = useNavigate();
+
     const [expanded, setExpanded] = useState<string[]>([]);
     const [showMore, setShowMore] = useState<string[]>([]);
+    const [filenames, setFilenames] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchFiles = async () => {
+            const files = await getAllFilenames();
+            setFilenames(files);
+        };
+        fetchFiles();
+    }, [])
 
     useEffect(() => {
         setExpanded([]);
@@ -45,9 +59,21 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
         );
     };
 
+    console.log(filenames)
+
     return (
         <Container>
-            {!loading && !searchResult && (
+            {filenames.length === 0 && (
+                <UploadRedirection onClick={() => navigate("/files")}>
+                    <NullText>
+                        <BigIcon>
+                            <FileAddOutlined />
+                        </BigIcon>
+                        <p>Please upload some files before starting ...</p>
+                    </NullText>
+                </UploadRedirection>
+            )}
+            {filenames.length > 0 && !loading && !searchResult && (
                 <NullText>
                     <BigIcon>
                         <FileSearchOutlined />
@@ -157,6 +183,12 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
 
 export default SearchResultDisplay;
 
+const UploadRedirection = styled.div`
+    cursor: pointer;
+    &:hover {
+        color: ${(props) => props.theme.accentColor};
+    }
+`;
 
 const ShowMoreButton = styled.button`
     color: ${(props) => props.theme.primaryColor};
