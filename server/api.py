@@ -28,14 +28,21 @@ text_path = node_path + '/extracted_texts'
 files_path = node_path + '/files'
 
 # Configure CORS for the FastAPI application
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost",
+    "http://51.210.255.189/:3000",
+    "http://51.210.255.189",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  
-    allow_headers=["*"],  
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-
 @app.post("/upload-pdf/")
 async def upload_pdf(file: UploadFile = File(...)):
     """
