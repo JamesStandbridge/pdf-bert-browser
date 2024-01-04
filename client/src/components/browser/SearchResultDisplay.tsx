@@ -194,7 +194,7 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
                         </ResultContainer>
                     );
                 })}
-            {!loading &&
+            {/* {!loading &&
             searchResult &&
             searchResult.filter(
                 (result: ResultItem) => result.snippet !== 'Snippet not found.',
@@ -205,7 +205,7 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
                     </BigIcon>
                     <p>No results found</p>
                 </NullText>
-            ) : null}
+            ) : null} */}
         </Container>
     );
 };

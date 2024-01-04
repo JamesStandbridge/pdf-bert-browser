@@ -2,6 +2,8 @@ import os
 import gensim
 import numpy as np
 import faiss
+from sklearn.decomposition import PCA
+
 
 def load_documents(directory_path):
     """
@@ -26,43 +28,50 @@ def load_documents(directory_path):
                 documents[original_filename] = file.read().lower()
     return documents
 
-def vectorize_documents(documents):
+def vectorize_documents(documents, vector_size=300, window=10, min_count=2, epochs=40, n_components=1):
     """
-    Vectorizes documents using the Doc2Vec model and normalizes the vectors.
+    Vectorizes documents using the Doc2Vec model with adjustable parameters.
 
     Args:
-    documents (dict): A dictionary of documents where keys are filenames and 
-                      values are the document contents.
+    documents (dict): A dictionary of documents.
+    vector_size (int): The dimensionality of the feature vectors.
+    window (int): The maximum distance between the current and predicted word.
+    min_count (int): Ignores all words with total frequency lower than this.
+    epochs (int): Number of iterations over the corpus.
 
     Returns:
-    tuple: A tuple containing the trained Doc2Vec model and a list of normalized document vectors.
+    tuple: A trained Doc2Vec model and a list of document vectors.
     """
+
     tagged_data = [gensim.models.doc2vec.TaggedDocument(words=_d.split(), tags=[str(i)]) for i, _d in enumerate(documents.values())]
-    model = gensim.models.Doc2Vec(tagged_data, vector_size=100, window=2, min_count=1, epochs=40)
+    model = gensim.models.Doc2Vec(tagged_data, vector_size=vector_size, window=window, min_count=min_count, epochs=epochs)
+
     
     # Inferring and normalizing document vectors
     doc_vectors = [model.infer_vector(doc.split()) for doc in documents.values()]
     # Normalize each vector to have unit length
     doc_vectors = [vec / np.linalg.norm(vec) if np.linalg.norm(vec) != 0 else np.zeros_like(vec) for vec in doc_vectors]
 
+    # Réduction de dimension avec PCA
+    # pca = PCA(n_components=n_components)
+    # doc_vectors = pca.fit_transform(doc_vectors)
+
     return model, doc_vectors
 
 def create_faiss_index(doc_vectors):
     """
-    Creates a FAISS index for the given document vectors.
+    Creates a FAISS index for the given document vectors using 
+    IndexFlatIP for cosine similarity.
 
     Args:
-    doc_vectors (list): A list of document vectors.
+    doc_vectors (list): A list of normalized document vectors.
 
     Returns:
-    faiss.IndexFlatL2: A FAISS index object for the document vectors.
-
-    Description:
-    Initializes a FAISS index with the same dimension as the document vectors 
-    and adds the vectors
-    to the index for efficient similarity search.
+    faiss.IndexFlatIP: A FAISS index object for the document vectors 
+    based on cosine similarity.
     """
     dimension = len(doc_vectors[0])
-    index = faiss.IndexFlatL2(dimension)
+    # Using IndexFlatIP for cosine similarity
+    index = faiss.IndexFlatIP(dimension)
     index.add(np.array(doc_vectors).astype('float32'))
     return index
