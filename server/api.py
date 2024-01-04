@@ -32,7 +32,7 @@ files_path = node_path + '/files'
 origins = [
     "http://localhost:3000",
     "http://localhost",
-    "http://51.210.255.189/:3000",
+    "http://51.210.255.189:3000",
     "http://51.210.255.189",
 ]
 
