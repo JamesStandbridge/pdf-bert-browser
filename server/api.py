@@ -18,13 +18,14 @@ class SearchRequest(BaseModel):
 app = FastAPI()
 
 # Define the paths to various directories and files
-index_path = 'node/index'
+node_path = 'node'
+index_path = node_path + '/index'
 model_path = index_path + '/bert_model.pkl'
 tokenizer_path = index_path + '/tokenizer.pkl'
 faiss_index_path = index_path +  '/faiss_index.idx'
 filenames_path = index_path + '/filenames.pkl'
-text_path = 'node/extracted_texts'
-files_path = 'node/files'
+text_path = node_path + '/extracted_texts'
+files_path = node_path + '/files'
 
 # Configure CORS for the FastAPI application
 app.add_middleware(
