@@ -4,6 +4,8 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Response
 from pydantic import BaseModel
 import shutil
 
+import config
+
 from typing import List
 import os
 
@@ -18,31 +20,15 @@ class SearchRequest(BaseModel):
 app = FastAPI()
 
 # Define the paths to various directories and files
-node_path = './node'
-index_path = node_path + '/index'
-doc2vec_model_path = index_path + '/doc2vec_model.pkl'
-faiss_index_path = index_path +  '/faiss_index.idx'
-filenames_path = index_path + '/filenames.pkl'
-text_path = node_path + '/extracted_texts'
-files_path = node_path + '/files'
-
-# Configure CORS for the FastAPI application
-
-origins = [
-    "http://localhost:3000/*",
-    "http://localhost:3000*",
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://localhost",
-    "http://51.210.255.189:3000",
-    "http://51.210.255.189:3000*",
-    "http://51.210.255.189:3000/*",
-    "http://51.210.255.189",
-]
+model_path = config.MODEL_PATH
+faiss_index_path = config.FAISS_INDEX_PATH
+filenames_path = config.FILENAMES_PATH
+text_path = config.TEXT_PATH
+files_path = config.FILES_PATH
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=config.ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -54,7 +40,7 @@ async def upload_pdf(file: UploadFile = File(...)):
         file, 
         upload_directory=files_path,
         text_directory=text_path,
-        model_path=doc2vec_model_path,
+        model_path=model_path,
         faiss_index_path=faiss_index_path,
         filenames_path=filenames_path
     )
@@ -64,14 +50,9 @@ async def upload_pdf(file: UploadFile = File(...)):
 @app.post("/search/", response_model=List[dict])
 async def perform_search(request: SearchRequest):
     try:
-        model_path = doc2vec_model_path
-        faiss_index_path = faiss_index_path
-        filenames_path = filenames_path
-        text_directory = text_path
-
         model, faiss_index, filenames = load_model_index_and_filenames(model_path, faiss_index_path, filenames_path)
 
-        search_results = search(request.query, model, faiss_index, filenames, text_directory)
+        search_results = search(request.query, model, faiss_index, filenames, text_path)
 
         response = []
         for filename, distance, snippet, occurrences in search_results:
