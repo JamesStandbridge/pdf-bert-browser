@@ -31,6 +31,7 @@ files_path = node_path + '/files'
 
 origins = [
     "http://localhost:3000",
+    "http://localhost:5173",
     "http://localhost",
     "http://51.210.255.189:3000",
     "http://51.210.255.189",
@@ -122,7 +123,7 @@ async def get_pdf(filename: str):
     Returns:
         Response: A FastAPI Response object containing the PDF file data.
     """
-    file_path = os.path.join('node/files', filename)
+    file_path = os.path.join(files_path, filename)
     if os.path.exists(file_path):
         with open(file_path, "rb") as file:
             file_data = file.read()
