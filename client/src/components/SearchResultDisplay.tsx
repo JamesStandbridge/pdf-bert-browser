@@ -59,7 +59,7 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
                     <BigIcon>
                         <LoadingOutlined />
                     </BigIcon>
-                    <p>Loading</p>
+                    <p>Scanning documents ...</p>
                 </NullText>
             )}
             {!loading &&

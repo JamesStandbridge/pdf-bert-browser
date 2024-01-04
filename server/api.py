@@ -53,14 +53,17 @@ async def perform_search(request: SearchRequest):
         search_results = search(request.query, tokenizer, model, faiss_index, filenames, text_path)
 
         response = []
+
         for filename, distance, snippet, occurrences in search_results:
             result = {
                 "document": filename,
                 "distance": float(distance),
-                "occurrences": occurrences,
+                "occurrences": float(occurrences),
                 "snippet": snippet
             }
             response.append(result)
+
+        print(response)
 
         return response
     except Exception as e:
