@@ -24,4 +24,4 @@ EXPOSE 8000
 
 # Use ENTRYPOINT and CMD to start Uvicorn
 ENTRYPOINT ["uvicorn"]
-CMD ["api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["api:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
