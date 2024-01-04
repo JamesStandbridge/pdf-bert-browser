@@ -1,20 +1,22 @@
 import { useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import Input from './Input';
-import Button from './Button';
+import Input from '../shared/Input';
+import Button from '../shared/Button';
 import { InputRef } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 type Props = {
     query: string;
     onSearch: (e: any) => void;
     onQueryChange: (query: string) => void;
+    loading: boolean;
 };
 
-const SearchForm = ({ query, onSearch, onQueryChange }: Props) => {
+const SearchForm = ({ query, onSearch, onQueryChange, loading }: Props) => {
     const inputRef = useRef(null);
 
     useEffect(() => {
-        const handleKeyDown = (e) => {
+        const handleKeyDown = (e: { ctrlKey: any; shiftKey: any; code: string; preventDefault: () => void; }) => {
             if (e.ctrlKey && e.shiftKey && e.code === 'KeyF') {
                 e.preventDefault();
                 inputRef.current && (inputRef.current as InputRef).focus();
@@ -28,6 +30,12 @@ const SearchForm = ({ query, onSearch, onQueryChange }: Props) => {
         };
     }, []);
 
+    useEffect(() => {
+        if(!loading) {
+            inputRef.current && (inputRef.current as InputRef).focus();
+        }
+    }, [loading]);
+
     return (
         <Container onSubmit={onSearch}>
             <InputContainer>
@@ -39,8 +47,13 @@ const SearchForm = ({ query, onSearch, onQueryChange }: Props) => {
                     name={'query'}
                     placeholder='Ctrl+Shift+F to search'
                     containerStyle={{ width: '100%' }}
+                    disabled={loading}
                 />
-                <Button onClick={onSearch}>search</Button>
+                <Button 
+                    disabled={loading}
+                    onClick={onSearch}>
+                    <SearchOutlined /> search
+                </Button>
             </InputContainer>
         </Container>
     );

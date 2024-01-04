@@ -19,6 +19,7 @@ type Props = {
     prefix?: React.ReactNode;
     error?: string;
     containerStyle?: React.CSSProperties;
+    disabled?: boolean;
 };
 
 const Input = React.forwardRef<InputRef, Props>(({
@@ -31,6 +32,7 @@ const Input = React.forwardRef<InputRef, Props>(({
     prefix,
     error = '',
     containerStyle = {},
+    disabled = false,
 }, ref) => {
     return (
         <DesignComponentContainer style={containerStyle}>
@@ -46,6 +48,7 @@ const Input = React.forwardRef<InputRef, Props>(({
                         name={name}
                         type={type}
                         status={error ? 'error' : ''}
+                        disabled={disabled}
                     />
                 )}
                 {type === 'text' && (
@@ -58,6 +61,7 @@ const Input = React.forwardRef<InputRef, Props>(({
                         name={name}
                         type={type}
                         status={error ? 'error' : ''}
+                        disabled={disabled}
                     />
                 )}
             </InputContainer>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { ResultItem } from '../type';
+import { ResultItem } from '../../type';
 import {
     RightOutlined,
     DownOutlined,
@@ -9,7 +9,7 @@ import {
     LoadingOutlined,
     FileSearchOutlined,
 } from '@ant-design/icons';
-import { highlightSearchTerms } from '../utils/highlighSearchTerms';
+import { highlightSearchTerms } from '../../utils/highlighSearchTerms';
 
 type Props = {
     query: string;
@@ -59,7 +59,7 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
                     <BigIcon>
                         <LoadingOutlined />
                     </BigIcon>
-                    <p>Loading</p>
+                    <p>Scanning documents ...</p>
                 </NullText>
             )}
             {!loading &&
@@ -122,15 +122,15 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
                                     <HorizontalLine />
                                 </SourceActionContainer>
                                 {expanded.includes(result.document) ? (
-                                    <SourceContainer>
+                                    <SourceContainer 
+                                        href={`http://localhost:8000/get-pdf/${result.document}`}
+                                        target="_blank"
+                                    >
                                         <BigIcon>
                                             <FilePdfOutlined />
                                         </BigIcon>
 
-                                        <PDFLink
-                                            href={`http://localhost:8000/get-pdf/${result.document}`}
-                                            target="_blank"
-                                        >
+                                        <PDFLink>
                                             {result.document}
                                         </PDFLink>
                                     </SourceContainer>
@@ -156,8 +156,7 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
 
 export default SearchResultDisplay;
 
-const PDFLink = styled.a`
-    text-decoration: none;
+const PDFLink = styled.p`
     color: ${(props) => props.theme.primaryColor};
 `;
 
@@ -187,11 +186,12 @@ const BigIcon = styled.div`
     color: ${(props) => props.theme.primaryColor};
 `;
 
-const SourceContainer = styled.div`
+const SourceContainer = styled.a`
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 20px 40px;
+    text-decoration: none;
 `;
 
 const ArrowIcon = styled.div``;
@@ -224,4 +224,4 @@ const ResultContainer = styled.div`
     border-radius: 5px;
 `;
 
-const Container = styled.div``;
+const Container = styled.div`padding-bottom: 100px;`;

@@ -5,12 +5,13 @@ import {
 } from './design-system.styled';
 
 type Props = {
-    children: React.ReactNode;
-    onClick: (e: React.MouseEvent<HTMLElement>) => void;
+    children?: React.ReactNode;
+    onClick?: (e: React.MouseEvent<HTMLElement>) => void;
     type?: 'link' | 'text' | 'default' | 'primary' | 'dashed' | undefined;
     block?: boolean;
     error?: string;
     margin?: string;
+    disabled?: boolean;
 };
 
 const Button = ({
@@ -20,6 +21,7 @@ const Button = ({
     block = false,
     error = '',
     margin = '',
+    disabled = false,
 }: Props) => {
     return (
         <DesignComponentContainer $margin={margin}>
@@ -27,6 +29,7 @@ const Button = ({
                 onClick={onClick}
                 type={type}
                 block={block}
+                disabled={disabled}
                 style={{
                     textTransform: 'uppercase',
                     fontWeight: 'bold',
