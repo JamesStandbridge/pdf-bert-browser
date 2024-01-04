@@ -8,6 +8,26 @@ export const Label = styled.p`
     color: #464646;
 `;
 
+
+export const PDFLink = styled.p`
+    color: ${(props) => props.theme.primaryColor};
+`;
+
+
+export const BigIcon = styled.div`
+    font-size: 50px;
+    color: ${(props) => props.theme.primaryColor};
+`;
+
+
+export const NullText = styled.div`
+    text-align: center;
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 100px;
+`;
+
+
 export const DesignComponentContainer = styled.div<DesignComponentContainerProps>`
     margin: ${(props) => (props.$margin ? props.$margin : '25px 0')};
 `;

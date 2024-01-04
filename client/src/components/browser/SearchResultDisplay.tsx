@@ -10,6 +10,7 @@ import {
     FileSearchOutlined,
 } from '@ant-design/icons';
 import { highlightSearchTerms } from '../../utils/highlighSearchTerms';
+import { BigIcon, NullText, PDFLink } from '../shared/design-system.styled';
 
 type Props = {
     query: string;
@@ -156,9 +157,6 @@ const SearchResultDisplay = ({ query, searchResult, loading }: Props) => {
 
 export default SearchResultDisplay;
 
-const PDFLink = styled.p`
-    color: ${(props) => props.theme.primaryColor};
-`;
 
 const ShowMoreButton = styled.button`
     color: ${(props) => props.theme.primaryColor};
@@ -172,18 +170,6 @@ const ShowMoreButton = styled.button`
 
 const SnippetContainer = styled.div`
     position: relative;
-`;
-
-const NullText = styled.div`
-    text-align: center;
-    font-size: 20px;
-    font-weight: 500;
-    margin-top: 100px;
-`;
-
-const BigIcon = styled.div`
-    font-size: 50px;
-    color: ${(props) => props.theme.primaryColor};
 `;
 
 const SourceContainer = styled.a`

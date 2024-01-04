@@ -2,10 +2,13 @@ import styled from 'styled-components';
 import FileInput from './FileInput';
 import { useEffect, useState } from 'react';
 import {
-    FilePdfOutlined
+    FilePdfOutlined,
+    FileUnknownOutlined,
+    FileAddOutlined
 } from '@ant-design/icons';
 import { getAllFilenames, uploadFile } from '../../API/repository/file-repository';
 import Input from '../shared/Input';
+import { BigIcon, NullText, PDFLink } from '../shared/design-system.styled';
 
 type Props = {
 };
@@ -41,24 +44,31 @@ const Files = ({  }: Props) => {
     return (
         <Container>
             <Actions>
-        <Input 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search for files"
-            name="search"
-            label="Search"
-            containerStyle={{ width: '100%' }}
-        />
-        <FileInput
-            selectedFile={selectedFile}
-            onFileSelect={(file) => {
-                handleFileUpload(file);
-            }}
-        />
-
+                <Input 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search for files"
+                    name="search"
+                    label="Search"
+                    containerStyle={{ width: '100%' }}
+                />
+                <FileInput
+                    selectedFile={selectedFile}
+                    onFileSelect={(file) => {
+                        handleFileUpload(file);
+                    }}
+                />
             </Actions>
         <FileListContainer>
             <FileList>
+                {filenames.length === 0 && searchQuery.length === 0 && (
+                    <NullText>
+                        <BigIcon>
+                            <FileAddOutlined />
+                        </BigIcon>
+                        <p>Upload some files</p>
+                    </NullText>
+                )}
                 {filenames.filter(
                     filename => searchQuery.length === 0 
                     || filename.toLowerCase().includes(searchQuery.toLowerCase())).map((filename) => (
@@ -77,6 +87,14 @@ const Files = ({  }: Props) => {
                         </PDFLink>
                     </FileListItem>
                 ))}
+                {searchQuery.length > 0  && filenames.filter(filename => filename.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
+                <NullText>
+                    <BigIcon>
+                        <FileUnknownOutlined />
+                    </BigIcon>
+                    <p>No files matching the query</p>
+                </NullText>
+            ) : null}
             </FileList>
         </FileListContainer>
         </Container>
@@ -90,17 +108,6 @@ const Actions = styled.div`
     align-items: end;
     width: 100%;`
 ;
-
-const PDFLink = styled.p`
-    color: ${(props) => props.theme.primaryColor};
-    font-size: 12px;
-    text-align: center;
-`;
-
-const BigIcon = styled.div`
-    font-size: 50px;
-    color: ${(props) => props.theme.primaryColor};
-`;
 
 
 const FileListContainer = styled.div`

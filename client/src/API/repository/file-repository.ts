@@ -20,9 +20,17 @@ export const uploadFile = async (file: File): Promise<{filename: string}> => {
     return response.data;
 };
 
-export const getAllFilenames = async (): Promise<any> => {
+export const getAllFilenames = async (): Promise<string[]> => {
     const response = await AxiosService.get(
         endpoints.GET_ALL_FILENAMES()
     );
     return response.data;
+}
+
+export const resetFiles = async (): Promise<any> => {
+    const response = await AxiosService.delete(
+        endpoints.RESET_FILES()
+    );
+    return response.data;
+    
 }
