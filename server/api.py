@@ -2,6 +2,8 @@
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Response
 from pydantic import BaseModel
+import shutil
+
 from typing import List
 import os
 
@@ -15,14 +17,16 @@ class SearchRequest(BaseModel):
 
 app = FastAPI()
 
-
-model_path = 'node/index/bert_model.pkl'
-tokenizer_path = 'node/index/tokenizer.pkl'
-faiss_index_path = 'node/index/faiss_index.idx'
-filenames_path = 'node/index/filenames.pkl'
+# Define the paths to various directories and files
+index_path = 'node/index'
+model_path = index_path + '/bert_model.pkl'
+tokenizer_path = index_path + '/tokenizer.pkl'
+faiss_index_path = index_path +  '/faiss_index.idx'
+filenames_path = index_path + '/filenames.pkl'
 text_path = 'node/extracted_texts'
 files_path = 'node/files'
 
+# Configure CORS for the FastAPI application
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
@@ -33,7 +37,15 @@ app.add_middleware(
 
 @app.post("/upload-pdf/")
 async def upload_pdf(file: UploadFile = File(...)):
-    print(file)
+    """
+    Upload a PDF file to the server and process it for text extraction and indexing.
+
+    Args:
+        file (UploadFile): A PDF file uploaded by the client.
+
+    Returns:
+        dict: A dictionary containing the filename of the uploaded file.
+    """
     await upload_and_process_pdf(
         file, 
         upload_directory=files_path,
@@ -47,6 +59,15 @@ async def upload_pdf(file: UploadFile = File(...)):
 
 @app.post("/search/", response_model=List[dict])
 async def perform_search(request: SearchRequest):
+    """
+    Perform a search on the indexed documents using the provided query.
+
+    Args:
+        request (SearchRequest): The search request containing the query.
+
+    Returns:
+        List[dict]: A list of dictionaries containing search results with document info.
+    """
     try:
         tokenizer, model, faiss_index, filenames = load_model_index_and_filenames(model_path, tokenizer_path, faiss_index_path, filenames_path)
 
@@ -66,10 +87,32 @@ async def perform_search(request: SearchRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    
+
+@app.get("/get-all-pdf/")   
+async def get_all_pdf():
+    """
+    Retrieve a list of all PDF filenames available on the server.
+
+    Returns:
+        List[str]: A list of PDF filenames.
+    """
+    files = []
+    for filename in os.listdir(files_path):
+        if filename.endswith(".pdf"):
+            files.append(filename)
+    return files
 
 @app.get("/get-pdf/{filename}")
 async def get_pdf(filename: str):
+    """
+    Retrieve a specific PDF file by its filename.
+
+    Args:
+        filename (str): The filename of the PDF to retrieve.
+
+    Returns:
+        Response: A FastAPI Response object containing the PDF file data.
+    """
     file_path = os.path.join('node/files', filename)
     if os.path.exists(file_path):
         with open(file_path, "rb") as file:
@@ -82,3 +125,35 @@ async def get_pdf(filename: str):
         return Response(content=file_data, headers=headers, media_type='application/pdf')
     else:
         raise HTTPException(status_code=404, detail="File not found")
+    
+@app.delete("/reset-files/")
+async def reset_data():
+    """
+    Reset the application data by clearing the contents of the text, files,
+    and index directories.
+
+    This operation deletes all the PDF files, extracted text files, and index files, 
+    effectively
+    resetting the application state. This is a destructive operation and should be 
+    used with caution.
+
+    Returns:
+        dict: A status message indicating the outcome of the reset operation.
+
+    Raises:
+        HTTPException: An error 500 if the reset operation fails.
+    """
+    try:
+        if os.path.exists(text_path):
+            shutil.rmtree(text_path)
+            os.makedirs(text_path)  
+        if os.path.exists(files_path):
+            shutil.rmtree(files_path)
+            os.makedirs(files_path)
+        if os.path.exists(index_path):
+            shutil.rmtree(index_path)
+            os.makedirs(index_path)
+
+        return {"status": "success", "message": "Data has been reset."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
