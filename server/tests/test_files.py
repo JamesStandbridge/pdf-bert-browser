@@ -52,4 +52,4 @@ async def test_upload_and_process_pdf():
     # Check if the file was saved correctly during the upload and processing
     assert os.path.isfile(uploaded_file_path)
     
-    # The removal of the file is not needed here as the teardown_directories will handle it
+# The removal of the file is not needed here as the teardown_directories will handle it

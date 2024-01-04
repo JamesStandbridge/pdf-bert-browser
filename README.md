@@ -1,78 +1,85 @@
-# PDF Text Search Application
+# Project Title
 
-This application provides a comprehensive solution for uploading PDF files, extracting text content, vectorizing the text, and enabling efficient search capabilities through a FAISS index. Built with a modern Python stack including FastAPI, Transformers, and PyTorch, it is designed to be scalable and easy to use.
+## Description
 
-## Features
+This project is a full-stack application featuring a FastAPI backend and a SAP React Typescript frontend. The backend handles PDF uploads, processing, and allows users to perform searches on the indexed data. The frontend provides a user-friendly interface for interacting with the backend services.
 
--  **PDF Upload**: Users can upload PDF documents which will be processed and stored for text searching. 
--  **Text Extraction**: Extracts text from PDF documents using PDFMiner. 
--  **Text Vectorization**: Converts extracted text into numerical vectors using BERT embeddings. 
-- **Efficient Searching**: Implements a FAISS index to enable fast and efficient similarity search on the vectorized text. 
-- **Web Interface**: Provides a user-friendly web interface to interact with the system, allowing for PDF uploads, searching, and document retrieval.
+## Features and Functionality
+
+### Backend (FastAPI)
+
+- **PDF Processing and Text Extraction**: The backend allows users to upload PDF documents. It then processes these documents, extracting text for further operations.
+- **Document Indexing**: Extracted text from PDFs is indexed using efficient data structures, enabling quick and accurate search functionality.
+- **Search Functionality**: Users can search through the indexed texts using keywords or phrases. The system supports both exact and approximate search methods.
+- **PDF Retrieval**: The backend provides endpoints to retrieve either specific PDF documents or a list of all available PDFs.
+- **Data Reset Feature**: There is an endpoint to reset the system, clearing all processed data and indices, useful for maintenance or reinitialization.
+
+### Frontend (SAP React Typescript)
+
+- **User Interface for PDF Upload**: The frontend offers a simple and intuitive interface for users to upload PDF documents to be processed and indexed.
+- **Search Interface**: Users can easily perform searches on the indexed data. The interface provides options for keyword input and displays the search results clearly.
+- **Document Access**: The frontend allows users to view and download the PDF documents directly through the interface.
+- **Responsive Design**: The application is designed to be responsive and user-friendly, ensuring a smooth experience across various devices and screen sizes.
+
+### Docker Integration
+
+- **Containerized Application**: Both the frontend and backend are containerized using Docker, ensuring easy deployment and a consistent environment across different systems.
+- **Easy Setup**: With Docker Compose, the application can be set up and run with minimal configuration, making it easy for users to get started.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
+
+- Docker
+- Docker Compose
 
 ## Getting Started
 
-### Prerequisites
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-- Docker 
-- Docker Compose
+### Setting Up the Environment
 
-### Installation
+1.  **Clone the repository:**
+    ```bash
+     $ git clone [URL_TO_REPOSITORY]
+     $ cd [REPOSITORY_NAME]
+    ```
+2.  **Build the Docker containers:**
 
-Clone the repository to your local machine:
+    This command builds both the FastAPI server and the ViteJS client.
 
-```bash
-$ git clone https://github.com/your-username/your-repository.git
-$ cd your-repository
-```
+    ```bash
+    $ docker-compose build
+    ```
 
-Modify line 16 of your Dockerfile.client file to adjust the API url according to your installation: on a local machine, configure on localhost, on a server, configure on the appropriate ip.
- 
-Use Docker Compose to build and start the services:
+### Running the Application
 
-```bash
-$ docker-compose up --build
-```
+1.  **Start the Docker containers:**
 
-The command will start the FastAPI server and the Vite.js client, and will be accessible at the following URLs:
+    ```bash
+    $ docker-compose up
+    ```
 
--   FastAPI server: `http://localhost:8000`
--   Vite.js client: `http://localhost:3000`
+    This command starts the FastAPI server on port 8000 and the ViteJS client on port 3000.
+
+2.  **Accessing the Application:**
+
+    - The FastAPI backend server will be available at `http://localhost:8000`.
+    - The React frontend client can be accessed at `http://localhost:3000`.
 
 ## Usage
 
-Navigate to `http://localhost:3000` in your web browser to access the Vite.js client, where you can upload PDFs and perform text searches.
+### FastAPI Backend
 
-For direct interaction with the FastAPI server for actions like uploading PDFs or searching, you can use the provided RESTful API endpoints.
+- **Upload PDF:** Use the `/upload-pdf/` endpoint to upload PDF files for processing and indexing.
+- **Search:** Perform searches on the indexed data using the `/search/` endpoint.
+- **Retrieve PDFs:** Access individual or all PDF files via `/get-pdf/{filename}` and `/get-all-pdf/` endpoints, respectively.
+- **Reset Data:** Clear all data using the `/reset-files/` endpoint.
 
-### Uploading a PDF
+### React Frontend
 
-To upload a PDF document:
+Interact with the frontend application through your web browser to upload PDFs and perform searches. The interface communicates with the FastAPI backend to provide a seamless user experience.
 
-```bash
-$ curl -X 'POST' \
-  'http://localhost:8000/upload-pdf/' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: multipart/form-data' \
-  -F 'file=@path_to_pdf_file.pdf'
-  ```
+## Development
 
-### Searching
-
-To perform a search:
-
-```bash 
-curl -X 'POST' \
-  'http://localhost:8000/search/' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{"query": "your search query"}'
-  ``` 
-
-## All API Endpoints
-
--   `POST /upload-pdf/`: Upload a PDF file for processing.
--   `POST /search/`: Search the indexed documents with a query.
--   `GET /get-all-pdf/`: Retrieve a list of all available PDF filenames.
--   `GET /get-pdf/{filename}`: Retrieve a specific PDF file by its filename.
--   `DELETE /reset-files/`: Reset the application data by clearing all documents and indexes.
+For development purposes, you can make changes to the FastAPI backend or the React frontend. The changes will be reflected upon rebuilding the Docker containers.
