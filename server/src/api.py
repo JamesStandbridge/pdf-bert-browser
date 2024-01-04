@@ -18,7 +18,7 @@ class SearchRequest(BaseModel):
 app = FastAPI()
 
 # Define the paths to various directories and files
-node_path = '/app/node'
+node_path = '../node'
 index_path = node_path + '/index'
 model_path = index_path + '/bert_model.pkl'
 tokenizer_path = index_path + '/tokenizer.pkl'
@@ -43,6 +43,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 @app.post("/upload-pdf/")
 async def upload_pdf(file: UploadFile = File(...)):
     """
