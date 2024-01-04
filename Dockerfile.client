@@ -13,7 +13,7 @@ RUN yarn install --frozen-lockfile
 COPY ./client/ /app/
 
 # Create the .env file with the specified content
-RUN echo "VITE_API_DOMAIN=http://localhost:8000" > /app/.env
+RUN echo "VITE_API_DOMAIN=http://51.210.255.189/8000" > /app/.env
 
 # Build the application
 RUN yarn build
