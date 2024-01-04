@@ -18,7 +18,7 @@ class SearchRequest(BaseModel):
 app = FastAPI()
 
 # Define the paths to various directories and files
-node_path = 'node'
+node_path = '/app/node'
 index_path = node_path + '/index'
 model_path = index_path + '/bert_model.pkl'
 tokenizer_path = index_path + '/tokenizer.pkl'
