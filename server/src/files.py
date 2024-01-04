@@ -1,12 +1,13 @@
 #files.py
 
 import os
-from pdf_text_extraction_script import process_pdf_directory
-from vectorization_faiss_index_script import load_documents, vectorize_documents, create_faiss_index
 import pickle
 import shutil
 from fastapi import UploadFile
 import faiss
+
+from src.pdf_text_extraction_script import process_pdf_directory
+from src.vectorization_faiss_index_script import load_documents, vectorize_documents, create_faiss_index
 
 async def upload_and_process_pdf(file: UploadFile, upload_directory, text_directory, model_path, faiss_index_path, filenames_path):
     if not os.path.exists(upload_directory):

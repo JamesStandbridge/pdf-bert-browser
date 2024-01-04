@@ -2,3 +2,7 @@ node
 node/
 node/*
 __pycache__
+.pytest_cache
+test_output
+
+tests/test-node

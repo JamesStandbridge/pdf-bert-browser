@@ -4,7 +4,6 @@ import os
 import gensim
 import numpy as np
 import faiss
-import pickle
 
 def load_documents(directory_path):
     documents = {}

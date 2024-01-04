@@ -1,0 +1,557 @@
+(cid:13)
+
+c
+
+1998 kluwer academic publishers, boston. manufactured in the netherlands.
+
+machine learning, vv, 1{6 (1998)
+
+on applied research in machine learning
+
+foster provost
+
+foster@nynexst.com
+
+bel l atlantic science and technology
+
+400 westchester avenue, white plains, new york 10604
+
+ron kohavi
+
+ronnyk@sgi.com
+
+data mining and visualization, silicon graphics inc.
+
+2011 n. shoreline blvd, mountain view, ca. 94043
+
+common arguments for including applications papers in the machine learning
+
+literature are often based on the papers' value for advertising success stories and
+
+for morale boosting. for example, high-pro(cid:12)le applications can help to secure
+
+funding for future research and can help to attract high caliber students. however,
+
+there is another reason why such papers are of value to the (cid:12)eld, which is, arguably,
+
+even more vital. application papers are essential in order for machine learning to
+
+remain a viable science. they focus research on important unsolved problems that
+
+currently restrict the practical applicability of machine learning methods.
+
+much of the \science" of machine learning is a science of engineering.
+
+by this
+
+1
+
+we mean that it is dedicated to creating and compiling veri(cid:12)able knowledge related
+
+to the design and construction of artifacts. the scienti(cid:12)c knowledge comprises the-
+
+oretical arguments, observational categorizations, empirical studies, and practical
+
+demonstrations. the artifacts are computer programs that use data to build mod-
+
+els that are practically or theoretically useful. because the ob jects of study are
+
+intended to have practical utility, it is essential for research activities to be focused
+
+(in part) on the elimination of obstacles that impede their practical application.
+
+most often these obstacles take the form of restrictive simplifying assumptions
+
+commonly made in research. consider as an example the assumption, common in
+
+classi(cid:12)er learning research, that misclassi(cid:12)cation errors have equal costs. the vast
+
+ma jority of classi(cid:12)er learning research in machine learning has been conducted
+
+under this assumption, through the use of classi(cid:12)cation accuracy as the primary
+
+(or sole) evaluation metric. is this a reasonable assumption under which we should
+
+be operating? the answer is unclear. it is di(cid:14)cult to imagine a real-world classi(cid:12)-
+
+cation problem where error costs are equal, and researchers come in from the (cid:12)eld
+
+time after time citing problems dealing with unequal misclassi(cid:12)cation costs. never-
+
+theless, we continue to press on with research on increasing classi(cid:12)cation accuracy.
+
+in the machine learning literature isolated studies suggest that it is possible to
+
+weaken this assumption and still learn e(cid:11)ectively (turney 1997), but there have
+
+been no comprehensive studies.
+
+this is but one small example of a common simplifying assumption that may
+
+be too strong. of course it is not clear that even a very solid applications paper
+
+pointing out the inapplicability of this assumption would be su(cid:14)cient to convince
+
+the (cid:12)eld to shift its scienti(cid:12)c paradigm (kuhn 1970).
+
+in fact, with respect to
+
+this particular example, it seems that research trails practice: commercial tools
+
+2
+
+foster provost and ron kohavi
+
+are now available that can be trained with sensitivity to error costs, even though
+
+the machine learning literature has not addressed how to do so well. however, if
+
+application-oriented papers were common in the machine learning literature, and
+
+many of them cited a particular assumption as being too strong, then one would
+
+hope that there would be su(cid:14)cient pressure to study its applicability in greater
+
+detail.
+
+the applied/academic research cycle
+
+one problem with writing an applications-oriented paper for the machine learn-
+
+ing literature is that we have not agreed on what contributions are su(cid:14)cient for
+
+publication. to complicate matters, there is a deeply ingrained notion that \re-
+
+search" and \applications" papers are categorically di(cid:11)erent, as is evident even in
+
+our discussion so far. however, the notion of such a dichotomy does not withstand
+
+intense scrutiny. upon considering the relative amounts of basic research and appli-
+
+cations work in a variety of paper-producing scenarios, it becomes clear that there
+
+is a smooth spectrum between pure applications work and pure academic research,
+
+along which resides a continuum of (cid:13)avors of applied research.
+
+although most papers published in the literature of machine learning can be
+
+placed at the academic end of the spectrum, much of the research allies itself ex-
+
+plicitly with an application. at the applied end of the spectrum, as soon as the
+
+application of the technology is not straightforward and the reasons why are in-
+
+vestigated, research begins. such research may uncover de(cid:12)ciencies in the current
+
+body of scienti(cid:12)c knowledge that should be brought to light, so that subsequent
+
+work can be directed to resolve them.
+
+the value of applications work is clearest by viewing this spectrum not as a static,
+
+linear categorization of research, but as a dynamic cycle through which research
+
+problems progress. general methods emerge from the world of academic research
+
+and practitioners apply them to real-world tasks. often, problems that arise in the
+
+applications cast light on insu(cid:14)ciencies in previous research results. subsequent
+
+applied research proposes and implements ad hoc solutions to the problems, which
+
+move further toward the academic end of the spectrum gaining generality and
+
+losing the simultaneous focus on a variety of problematic issues that characterizes
+
+applications work. eventually, a problem may move into the realm of pure research,
+
+because it has become an accepted problem in the scienti(cid:12)c paradigm, and it is no
+
+longer necessary to attach application signi(cid:12)cance to it (kuhn 1970). a general
+
+research solution can be picked up by practitioners, and the cycle will iterate driven
+
+by additional feedback from the successes and failures of the applications.
+
+we believe that in order for a science of engineering to remain viable, the ap-
+
+plied/academic research cycle must be healthy. in particular, it is necessary that
+
+the academic world receive feedback from the applications world. our purpose here
+
+is to contribute to the applied/academic cycle with a collection of papers that de-
+
+scribe interesting, real-world applications of the technology and that indicate the
+
+research needs and issues that arise.
+
+2
+
+applied research in machine learning
+
+3
+
+contributions of applications papers
+
+we would like to reemphasize our need as a scienti(cid:12)c community to broaden our
+
+view of the potential contributions of machine learning research papers. tradi-
+
+tionally, we have focused primarily on papers that contribute a new algorithm or
+
+method, which is evident in the wording of the review forms for our conferences and
+
+journals. instead, we should ask papers to contribute to our scienti(cid:12)c knowledge of
+
+machine learning. looking across the spectrum of di(cid:11)erent degrees of application
+
+orientation, it is clear that at the more academic end one would expect contribu-
+
+tions to be centered on algorithms, methods, theory, and comparative empirical
+
+studies on standard benchmark data sets. at the applied end of the spectrum, one
+
+should expect contributions to include feedback on the utility of research results,
+
+in-depth descriptions of new, practically important problems that cannot be solved
+
+well with existing methods, areas of weakness in the body of scienti(cid:12)c knowledge,
+
+and occasionally good, but ad hoc, algorithms or methods that will be starting
+
+points for future studies. in both cases, the presentations should be geared towards
+
+the scienti(cid:12)c contributions. the (cid:12)rst question that editors, reviewers, and readers
+
+ask should be \what is the contribution to the (cid:12)eld?"
+
+the papers in this special issue highlight needs for more research
+
+in this special issue we present (cid:12)ve papers that describe not only the application
+
+domains and the machine learning methods employed, but also what has been
+
+learned about important research problems that need to be addressed more fully.
+
+each paper points to several problems faced in its application(s) that were necessary
+
+for success, but for which existing research is weak. themes common to the set
+
+of papers are readily apparent, and several points reinforce existing knowledge
+
+(fayyad, piatetsky-shapiro and smyth 1996; brodley and smyth 1997; langley
+
+and simon 1995).
+
+saitta and neri (1998) de(cid:12)ne and characterize the process of developing a \real-
+
+world" machine learning application. they stress the importance of a user who
+
+actively participates in the process and exploits the learned knowledge. they con-
+
+trast this de(cid:12)nition with that of testing algorithms on ready-to-use data sets, such
+
+as those at the uc irvine repository (merz and murphy 1997). they illustrate their
+
+analysis with case study excerpts from four diverse applications: industrial trou-
+
+bleshooting, reading speech spectrograms, educational modeling, and gene splice-
+
+site recognition. while algorithm developers regularly evaluate the output of a
+
+learning algorithm based on certain criteria (e.g., error rates, description length,
+
+and running time), only the user is entitled to give the (cid:12)nal judgment about the
+
+usefulness of the results, according to the authors. they suggest that researchers
+
+in the (cid:12)eld of machine learning should concentrate more on unsolved problems in
+
+the real world.
+
+saitta and neri do a (cid:12)ne job of discussing relevant related work, and although
+
+this is not the (cid:12)rst place where these themes appear, their pervasiveness is striking
+
+in light of the lack of attention given to them by machine learning research. in par-
+
+4
+
+foster provost and ron kohavi
+
+ticular, in machine learning applications the ma jority of e(cid:11)ort is spent on problem
+
+engineering and on evaluation issues. the application and comparison of learning
+
+algorithms is a relatively small part of the process.
+
+burl, asker, smyth, fayyad, perona, crumpler and aubele (1998) and kubat,
+
+holte and matwin (1998) present applications of machine learning techniques to the
+
+problem of image classi(cid:12)cation, for cataloging volcanoes on the planet venus and for
+
+detecting oil spills at sea. both sets of authors found feature extraction and feature
+
+engineering from images to be necessary; both have looked at roc curves (receiver
+
+operating characteristic curves) in order to represent the tradeo(cid:11)s between true
+
+positive and false positive classi(cid:12)cations; both had to deal with imbalanced class
+
+distributions; both have had problems with the reliability of human labeling of
+
+the training set examples, and both have found that simple cross-validation is
+
+misleading and have used a variant of cross-validation for batched inputs called
+
+leave-one-batch-out. burl et al. mention that they would have liked to have had an
+
+integrated software infrastructure to support data labeling and annotation, design
+
+and reporting of experiments, visualization, classi(cid:12)cation algorithm application,
+
+and database support for image retrieval.
+
+lee, buchanan and aronis (1998) and finn, muggleton, page and srinivasan
+
+(1998) present applications of machine learning techniques in scienti(cid:12)c analysis
+
+and discovery, for predicting chemical carcinogenicity and for pharmacological dis-
+
+covery. the two papers concentrate on the need to represent problem-speci(cid:12)c back-
+
+ground knowledge for use by the learning program. lee et al. show that although
+
+standard learning algorithms can (cid:12)nd rules that are accurate and understandable,
+
+such algorithms are not su(cid:14)cient as tools for discovery. support for changes of
+
+assumptions, for the use of di(cid:11)erent vocabularies, and for the inclusion of semantic
+
+constraints are necessary. finn et al. use a learner that can represent structural
+
+background knowledge. compare this with other approaches that extract features
+
+for a propositional language from the original representation (e.g., images).
+
+both of these scienti(cid:12)c discovery applications made use of blindfold trials to help
+
+evaluate the models. in the work on pharmacophore discovery, the domain experts
+
+set up an explicit blindfold test to see whether progol could rediscover a previously
+
+published pharmacophore (it did). in the chemical carcinogenicity domain, there
+
+was a general call to submit predictions for a new set of chemicals for which the
+
+results of long-term bioassays were about to be released. these predictions were the
+
+topic of a subsequent domain-speci(cid:12)c workshop (the classi(cid:12)er learned with guidance
+
+from background knowledge performed extremely well).
+
+in several of the accepted papers, the authors had to deal with small amounts
+
+of data. this is in stark contrast with commercial data mining in areas such as
+
+marketing where some claim that \data mining only makes sense when there are
+
+large volumes of data. in fact, most data mining algorithms require large amounts
+
+of data in order to build and train the models" (berry and lino(cid:11) 1997, p. 6). lee
+
+et al. explain that the data are scarce because long-term animal bioassays take at
+
+least two years and cost at least $2 million per chemical. the national toxicology
+
+program database contains only about 340 chemicals with the panel's assessment of
+
+their carcinogenicity based on results of long-term rodent studies. similarly, kubat
+
+applied research in machine learning
+
+5
+
+et al. write that \images cost hundreds, sometimes thousands of dollars each," and
+
+hence they worked with only nine carefully selected images containing 41 oil slicks.
+
+a challenge to academic research
+
+we hope that this special issue can help to stimulate additional research that will
+
+(cid:13)esh out these areas of weakness and others pointed out by the collected papers.
+
+it is important to emphasize that these lessons are very general, and are becoming
+
+more and more apparent as machine learning technologies are being applied more
+
+widely. in our own applied work, in fraud detection (fawcett and provost 1997),
+
+telecommunications network diagnosis (danyluk and provost 1993), and scienti(cid:12)c
+
+discovery (provost and aronis 1996; aronis, provost and buchanan 1996), the same
+
+research needs are evident. the authors point to many other published applications
+
+papers for further support. in order to obtain general, principled solutions, applied
+
+researchers have been trying to push these di(cid:14)cult problems toward the academic
+
+end of the spectrum. we hope that we can help to convince those involved in
+
+academic machine learning research to pull.
+
+acknowledgments
+
+for the readers' convenience, we have placed at the end of this special issue a
+
+glossary of terms used in knowledge discovery and machine learning.
+
+we thank the anonymous reviewers who have helped us choose the papers and
+
+have given tremendous feedback to the authors and to the editors. we also thank
+
+tom dietterich, for his advice and enthusiasm, and those whom we have engaged
+
+in discussions about the value of applications papers, especially andrea danyluk,
+
+tom fawcett, rob holte, pat riddle, and jude shavlik.
+
+with the opening essay we do not claim to be pushing the frontiers of the philos-
+
+ophy of science. rather we have tried to make it relevant to our current situation.
+
+the general thesis was spawned and nurtured by many discussions with bruce
+
+buchanan over the last ten years. we echo general points made by many others
+
+when discussing the value of applications to the science of ai (e.g., schorr and
+
+rappaport (1990), smith and scott (1992), shrobe (1996)). although developed
+
+independently, many points of argument are strikingly similar to those of lynn
+
+andrea stein, who has written recently about the relationship between science and
+
+engineering in knowledge representation and reasoning (stein 1996).
+
+if a machine learning algorithm were run on the unusual words in the accepted
+
+papers, it would certainly notice that four out of (cid:12)ve papers used the acronym
+
+\sar." in two papers (kubat et al. 1998; burl et al. 1998) it referred to synthetic
+
+aperture radar, while in the other two (lee et al. 1998; finn et al. 1998) it referred
+
+to structure-activity relationship. despite the chance that the training set has
+
+been over(cid:12)t, we intend to include \sar" in our future submitted papers to enhance
+
+our acceptance rate.
+
+6
+
+foster provost and ron kohavi
+
+notes
+
+1. see also the discussion by stein concerning knowledge representation and reasoning (stein
+
+1996).
+
+2. we hope that the emergence of a new community (kdd), part of whose emphasis is on machine
+
+learning research based on the needs of applications, is not an indication that (cid:12)eld of machine
+
+learning proper has spun o(cid:11) tangentially from this vital cycle; however, the possibility deserves
+
+consideration.
+
+references
+
+aronis, j. m., provost, f. j. and buchanan, b. g. (1996). exploiting background knowledge
+
+in automated discovery. proceedings of the second international conference on know ledge
+
+discovery and data mining (pp. 355{358), aaai press.
+
+berry, m. j. a. and lino(cid:11), g. (1997). data mining techniques: for marketing, sales, and
+
+customer support, john wiley & sons.
+
+brodley, c. and smyth, p. (1997). applying classi(cid:12)cation algorithms in practice, statistics and
+
+computing 7.
+
+burl, m., asker, l., smyth, p., fayyad, u., perona, p., crumpler, l. and aubele, j. (1998).
+
+learning to recognize volcanoes on venus, machine learning . this issue.
+
+danyluk, a. p. and provost, f. j. (1993). small disjuncts in action: learning to diagnose errors
+
+in the telephone network local loop. proceedings of the tenth international conference on
+
+machine learning (pp. 81{88), morgan kaufmann.
+
+fawcett, t. and provost, f. j. (1997). adaptive fraud detection. data mining and know ledge
+
+discovery, 1.
+
+fayyad, u. m., piatetsky-shapiro, g. and smyth, p. (1996). the kdd process for extracting
+
+useful knowledge from volumes of data. communications of the acm, 39.
+
+finn, p., muggleton, s., page, d. and srinivasan, a. (1998). pharmacophore discovery using the
+
+inductive logic programming system progol. machine learning. this issue.
+
+kubat, m., holte, r. c. and matwin, s. (1998). machine learning for the detection of oil spills in
+
+satellite radar images. machine learning. this issue.
+
+kuhn, t. (1970). the structure of scienti(cid:12)c revolutions, second edition, chicago, il: university
+
+of chicago press.
+
+langley, p. and simon, h. a. (1995). applications of machine learning and rule induction. com-
+
+munications of the acm, 38.
+
+lee, y., buchanan, b. g. and aronis, j. m. (1998). knowledge-based learning in exploratory
+
+science: learning rules to predict rodent carcinogenicity. machine learning. this issue.
+
+merz, c. j. and murphy, p. m. (1997). uci repository of machine learning databases.
+
+http://www.ics.uci.edu/~mlearn/mlrepository.html.
+
+provost, f. j. and aronis, j. m. (1996). scaling up inductive learning with massive parallelism.
+
+machine learning, 23.
+
+saitta, l. and neri, f. (1998). learning the the \real world." machine learning. this issue.
+
+schorr, h. and rappaport, a. (1990). preface, innovative applications of arti(cid:12)cial intel ligence,
+
+aaai press.
+
+shrobe, h. (1996). the innovative applications of arti(cid:12)cial intelligence conference: past and future.
+
+ai magazine, 17.
+
+smith, r. and scott, c. (1992). preface. innovative applications of arti(cid:12)cial intel ligence 3 (pp. ix{
+
+xi), aaai press.
+
+stein, l. a. (1996). science and engineering in knowledge representation and reasoning. ai mag-
+
+azine, 17.
+
+turney, p. (1997). cost-sensitive learning.
+
+http://ai.iit.nrc.ca/bibliographies/cost-sensitive.html.
+
+

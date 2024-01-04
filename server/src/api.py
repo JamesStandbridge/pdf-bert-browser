@@ -3,16 +3,14 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Response
 from pydantic import BaseModel
 import shutil
-
-import config
-
 from typing import List
 import os
-
 from fastapi.middleware.cors import CORSMiddleware
-from files import upload_and_process_pdf
 
-from search import load_model_index_and_filenames, search
+from src.files import upload_and_process_pdf
+from src.search import load_model_index_and_filenames, search
+
+import config
 
 class SearchRequest(BaseModel):
     query: str
@@ -20,6 +18,7 @@ class SearchRequest(BaseModel):
 app = FastAPI()
 
 # Define the paths to various directories and files
+index_path = config.INDEX_PATH
 model_path = config.MODEL_PATH
 faiss_index_path = config.FAISS_INDEX_PATH
 filenames_path = config.FILENAMES_PATH
@@ -109,3 +108,7 @@ async def reset_data():
         return {"status": "success", "message": "Data has been reset."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
