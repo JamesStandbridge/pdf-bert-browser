@@ -5,7 +5,7 @@ from typing import List
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.files import upload_and_process_pdf
+from src.files import upload_and_process_pdf, upload_and_process_pdfs
 from src.search import load_model_index_and_filenames, search
 
 import config
@@ -32,7 +32,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/upload-pdf/")
+@app.post("/upload-pdfs")
+async def upload_pdfs(files: List[UploadFile] = File(...)):
+    """
+    Endpoint to upload multiple PDF files.
+
+    Args:
+    files (List[UploadFile]): The list of PDF files to be uploaded.
+
+    Returns:
+    dict: A dictionary containing the filenames of the uploaded files.
+    """
+    await upload_and_process_pdfs(
+        files,
+        upload_directory=files_path,
+        text_directory=text_path,
+        model_path=model_path,
+        faiss_index_path=faiss_index_path,
+        filenames_path=filenames_path
+    )
+    return {"filenames": [file.filename for file in files]}
+
+@app.post("/upload-pdf")
 async def upload_pdf(file: UploadFile = File(...)):
     """
     Endpoint to upload a PDF file.
@@ -54,7 +75,7 @@ async def upload_pdf(file: UploadFile = File(...)):
     )
     return {"filename": file.filename}
 
-@app.post("/search/", response_model=List[dict])
+@app.post("/search", response_model=List[dict])
 async def perform_search(request: SearchRequest):
     """
     Endpoint to search the indexed documents.
@@ -115,7 +136,7 @@ async def get_pdf(filename: str):
     else:
         raise HTTPException(status_code=404, detail="File not found")
 
-@app.get("/get-all-pdf/")   
+@app.get("/get-all-pdf")   
 async def get_all_pdf():
     """
     Endpoint to retrieve a list of all PDF files.
@@ -130,7 +151,7 @@ async def get_all_pdf():
             files.append(filename)
     return files
 
-@app.delete("/reset-files/")
+@app.delete("/reset-files")
 async def reset_data():
     """
     Endpoint to reset and clear all data.

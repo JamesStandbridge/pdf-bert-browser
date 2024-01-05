@@ -12,6 +12,8 @@ type Props = {
     error?: string;
     margin?: string;
     disabled?: boolean;
+    icon?: React.ReactNode;
+    style?: React.CSSProperties;
 };
 
 const Button = ({
@@ -22,6 +24,8 @@ const Button = ({
     error = '',
     margin = '',
     disabled = false,
+    icon = null,
+    style = {},
 }: Props) => {
     return (
         <DesignComponentContainer $margin={margin}>
@@ -30,7 +34,9 @@ const Button = ({
                 type={type}
                 block={block}
                 disabled={disabled}
+                icon={icon}
                 style={{
+                    ...style,
                     textTransform: 'uppercase',
                     fontWeight: 'bold',
                 }}

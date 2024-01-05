@@ -1,49 +1,57 @@
 import styled from 'styled-components';
-import { Upload } from 'antd';
-import { UploadOutlined, LoadingOutlined} from '@ant-design/icons';
+import { uploadFiles } from '../../API/repository/file-repository';
+import { useRef, useState } from 'react';
 import Button from '../shared/Button';
-import { useEffect, useState } from 'react';
 
 type Props = {
-    onFileSelect: (file: File | null) => void;
-    selectedFile: File | null;
+    onRefresh: () => void;
 };
 
-const FileInput = ({ onFileSelect, selectedFile }: Props) => {
+const FileInput = ({ onRefresh }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => { 
-        if (selectedFile) {
-            setLoading(false);
+    const handleFileSelect = async (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+        if (event.target.files) {
+            const files = Array.from(event.target.files).filter(
+                (file) => file.type === 'application/pdf',
+            );
+
+            if (files.length > 0) {
+                setLoading(true);
+                try {
+                    await uploadFiles(files);
+                    onRefresh();
+                } catch (error) {
+                    console.error('Upload failure', error);
+                }
+                setLoading(false);
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
+            }
         }
-    }, [selectedFile]);
-    
-    const beforeUpload = (file: File) => {
-        setLoading(true);
-        if (file.type !== 'application/pdf') {
-            return Upload.LIST_IGNORE;
-        }
-        onFileSelect(file);
-        return false; 
+    };
+
+    const handleButtonClick = () => {
+        fileInputRef.current?.click();
     };
 
     return (
         <Container>
-            <Upload
-                beforeUpload={beforeUpload}
-                maxCount={1}
+            <HiddenInput
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                multiple
                 accept="application/pdf"
-                showUploadList={false}
                 disabled={loading}
-            >
-                <Button disabled={loading}>
-                    {loading ? (
-                        <><LoadingOutlined /> Indexing Document...</>
-                    ) : (
-                       <><UploadOutlined /> Upload Document</> 
-                    )}
-                </Button>
-            </Upload>
+            />
+            <Button onClick={handleButtonClick} disabled={loading}>
+                {loading ? 'Indexing Files...' : 'Upload Files'}
+            </Button>
         </Container>
     );
 };
@@ -51,4 +59,11 @@ const FileInput = ({ onFileSelect, selectedFile }: Props) => {
 export default FileInput;
 
 const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+`;
+
+const HiddenInput = styled.input`
+    display: none; // Masquer l'input
 `;

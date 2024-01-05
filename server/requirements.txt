@@ -6,3 +6,4 @@ pydantic==2.5.3
 transformers==4.36.2
 python-multipart
 gensim
+scikit-learn
